@@ -1,5 +1,5 @@
 import tensorflow as tf
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 
 class Model(tf.keras.Model):
@@ -67,3 +67,27 @@ class Model(tf.keras.Model):
             # If layer's name is like 'flatten_', a Flatten layer is initialized.
             elif name.split("_")[0] == "flatten":
                 self.model_layers[name] = tf.keras.layers.Flatten(name=name)
+
+    def call(self, inputs: List[tf.Tensor], training: bool = False) -> tf.Tensor:
+        """Input tensor is passed through the layers in the model.
+
+        Input tensor is passed through the layers in the model.
+
+        Args:
+            inputs: A list of tensors containing inputs for
+        """
+        # Asserts type & values of the input arguments.
+        assert isinstance(inputs, list), "Variable inputs should be of type 'list'."
+        assert isinstance(training, bool), "Variable training should be of type 'bool'."
+
+        # Iterates across the layers arrangement, and predicts the output for each layer.
+        x = inputs[0]
+        for name in self.model_configuration["digit_recognition"]["arrangement"]:
+            # If layer's name is like 'dropout_', the following output is predicted.
+            if name.split("_")[0] == "dropout":
+                x = self.model_layers[name](x, training=training)
+
+            # Else, the following output is predicted.
+            else:
+                x = self.model_layers[name](x)
+        return x
