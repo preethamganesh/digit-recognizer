@@ -1,4 +1,7 @@
+import os
+
 from typing import Dict, Any
+import pandas as pd
 
 
 class Dataset(object):
@@ -22,3 +25,26 @@ class Dataset(object):
 
         # Initalizes class variables.
         self.model_configuration = model_configuration
+
+    def load_data(self) -> None:
+        """Loads original train & test CSV files as dataframes.
+
+        Loads original train & test CSV files as dataframes.
+
+        Args:
+            None.
+
+        Returns:
+            None.
+        """
+        self.home_directory_path = os.getcwd()
+        self.original_train_data = pd.read_csv(
+            "{}/data/raw_data/digit_recognizer/train.csv".format(
+                self.home_directory_path
+            )
+        )
+        self.original_test_data = pd.read_csv(
+            "{}/data/raw_data/digit_recognizer/test.csv".format(
+                self.home_directory_path
+            )
+        )
