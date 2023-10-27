@@ -2,6 +2,7 @@ import os
 
 from typing import Dict, Any
 import pandas as pd
+from sklearn.utils import shuffle
 
 
 class Dataset(object):
@@ -48,3 +49,41 @@ class Dataset(object):
                 self.home_directory_path
             )
         )
+
+    def split_dataset(self) -> None:
+        """Splits original train data into new train, validation & test data.
+
+        Splits original train data into new train, validation & test data.
+
+        Args:
+            None.
+
+        Returns:
+            None.
+        """
+        # Computes number of examples in the train, validation and test datasets.
+        self.n_total_examples = len(self.original_train_data)
+        self.n_validation_examples = int(
+            self.model_configuration["validation_data_percentage"]
+            * self.n_total_examples
+        )
+        self.n_test_examples = int(
+            self.model_configuration["test_data_percentage"] * self.n_total_examples
+        )
+        self.n_train_examples = (
+            self.n_total_examples - self.n_validation_examples - self.n_test_examples
+        )
+
+        # Shuffles the original train data.
+        self.original_train_data = shuffle(self.original_train_data)
+
+        # Splits the original train data into new train, validation & test data.
+        self.new_validation_data = self.original_train_data[
+            : self.n_validation_examples
+        ]
+        self.new_test_data = self.original_train_data[
+            self.n_test_examples : self.n_test_examples + self.n_validation_examples
+        ]
+        self.new_train_data = self.original_train_data[
+            self.n_test_examples + self.n_validation_examples :
+        ]
