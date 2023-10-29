@@ -210,3 +210,19 @@ class Train(object):
             "train_accuracy": list(),
             "validation_accuracy": list(),
         }
+
+    def initialize_metric_trackers(self) -> None:
+        """Initializes trackers which computes the mean of all metrics.
+
+        Initializes trackers which computes the mean of all metrics.
+
+        Args:
+            None.
+
+        Returns:
+            None.
+        """
+        self.train_loss = tf.keras.metrics.Mean(name="train_loss")
+        self.validation_loss = tf.keras.metrics.Mean(name="validation_loss")
+        self.train_accuracy = tf.keras.metrics.Mean(name="train_accuracy")
+        self.validation_accuracy = tf.keras.metrics.Mean(name="validation_accuracy")
