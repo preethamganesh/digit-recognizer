@@ -12,9 +12,12 @@ warnings.filterwarnings("ignore")
 logging.getLogger("tensorflow").setLevel(logging.FATAL)
 
 
+import tensorflow as tf
+
 from src.utils import load_json_file
 from src.digit_recognizer.dataset import Dataset
 from src.utils import add_to_log
+from src.digit_recognizer.model import Model
 
 
 class Train(object):
@@ -121,4 +124,31 @@ class Train(object):
                 self.dataset.n_test_steps_per_epoch
             )
         )
+        add_to_log("")
+
+    def load_model(self) -> None:
+        """Loads model & other utilies for training.
+
+        Loads model & other utilies for training.
+
+        Args:
+            None.
+
+        Returns:
+            None.
+        """
+        # Loads model for current model configuration.
+        self.model = Model(self.model_configuration)
+
+        # Creates checkpoint manager for the neural network model and loads the optimizer.
+        self.checkpoint_directory_path = (
+            "{}/models/digit_recognizer/v{}/checkpoints".format(
+                self.home_directory_path, self.model_version
+            )
+        )
+        checkpoint = tf.train.Checkpoint(model=self.model)
+        self.manager = tf.train.CheckpointManager(
+            checkpoint, directory=self.checkpoint_directory_path, max_to_keep=3
+        )
+        add_to_log("Finished loading model for current configuration.")
         add_to_log("")
