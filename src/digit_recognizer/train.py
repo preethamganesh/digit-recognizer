@@ -142,6 +142,14 @@ class Train(object):
         # Loads model for current model configuration.
         self.model = Model(self.model_configuration)
 
+        # Loads the optimizer.
+        self.optimizer = tf.keras.optimizers.Adam(
+            learning_rate=self.model_configuration["model"]["learning_rate"],
+            beta_1=0.9,
+            beta_2=0.98,
+            epsilon=1e-9,
+        )
+
         # Creates checkpoint manager for the neural network model and loads the optimizer.
         self.checkpoint_directory_path = (
             "{}/models/digit_recognizer/v{}/checkpoints".format(
