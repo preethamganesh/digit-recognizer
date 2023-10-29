@@ -19,6 +19,7 @@ from src.digit_recognizer.dataset import Dataset
 from src.utils import add_to_log
 from src.digit_recognizer.model import Model
 from src.utils import check_directory_path_existence
+from src.utils import save_json_file
 
 
 class Train(object):
@@ -226,3 +227,41 @@ class Train(object):
         self.validation_loss = tf.keras.metrics.Mean(name="validation_loss")
         self.train_accuracy = tf.keras.metrics.Mean(name="train_accuracy")
         self.validation_accuracy = tf.keras.metrics.Mean(name="validation_accuracy")
+
+    def update_model_history(self, epoch: int) -> None:
+        """Updates model history dictionary with latest metrics & saves it as JSON file.
+
+        Updates model history dictionary with latest metrics & saves it as JSON file.
+
+        Args:
+            epoch: An integer for the number of current epoch.
+
+        Returns:
+            None.
+        """
+        # Asserts type & value of the arguments.
+        assert isinstance(epoch, int), "Variable epoch should be of type 'int'."
+
+        # Updates the metrics dictionary with the metrics for the current training & validation metrics.
+        self.model_history["epoch"].append(epoch + 1)
+        self.model_history["train_loss"].append(
+            str(round(self.train_loss.result().numpy(), 3))
+        )
+        self.model_history["validation_loss"].append(
+            str(round(self.validation_loss.result().numpy(), 3))
+        )
+        self.model_history["train_accuracy"].append(
+            str(round(self.train_accuracy.result().numpy(), 3))
+        )
+        self.model_history["validation_accuracy"].append(
+            str(round(self.validation_accuracy.result().numpy(), 3))
+        )
+
+        # Saves the model history dictionary as a JSON file.
+        save_json_file(
+            self.model_history,
+            "history",
+            "models/digit_recognizer/v{}/reports".format(
+                self.model_configuration["version"]
+            ),
+        )
