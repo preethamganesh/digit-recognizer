@@ -18,6 +18,7 @@ from src.utils import load_json_file
 from src.digit_recognizer.dataset import Dataset
 from src.utils import add_to_log
 from src.digit_recognizer.model import Model
+from src.utils import check_directory_path_existence
 
 
 class Train(object):
@@ -151,4 +152,42 @@ class Train(object):
             checkpoint, directory=self.checkpoint_directory_path, max_to_keep=3
         )
         add_to_log("Finished loading model for current configuration.")
+        add_to_log("")
+
+    def generate_model_summary_and_plot(self) -> None:
+        """Generates summary & plot for loaded model.
+
+        Generates summary & plot for loaded model.
+
+        Args:
+            None.
+
+        Returns:
+            None.
+        """
+        # Compiles the model to log the model summary.
+        model_summary = list()
+        self.model.build().summary(print_fn=lambda x: model_summary.append(x))
+        model_summary = "\n".join(model_summary)
+        add_to_log(model_summary)
+        add_to_log("")
+
+        # Creates the following directory path if it does not exist.
+        self.reports_directory_path = check_directory_path_existence(
+            "models/digit_recognizer/v{}/reports".format(self.model_version)
+        )
+
+        # Plots the model & saves it as a PNG file.
+        tf.keras.utils.plot_model(
+            self.model.build(),
+            "{}/model_plot.png".format(self.reports_directory_path),
+            show_shapes=True,
+            show_layer_names=True,
+            expand_nested=True,
+        )
+        add_to_log(
+            "Finished saving model plot at {}/model_plot.png.".format(
+                self.reports_directory_path
+            )
+        )
         add_to_log("")
