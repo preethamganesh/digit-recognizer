@@ -191,3 +191,22 @@ class Train(object):
             )
         )
         add_to_log("")
+
+    def initialize_model_history(self) -> None:
+        """Creates empty dictionary for saving the model metrics for the current model.
+
+        Creates empty dictionary for saving the model metrics for the current model.
+
+        Args:
+            None.
+
+        Returns:
+            None.
+        """
+        self.model_history = {
+            "epoch": list(),
+            "train_loss": list(),
+            "validation_loss": list(),
+            "train_accuracy": list(),
+            "validation_accuracy": list(),
+        }
