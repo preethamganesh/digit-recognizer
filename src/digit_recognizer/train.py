@@ -265,3 +265,32 @@ class Train(object):
                 self.model_configuration["version"]
             ),
         )
+
+    def compute_loss(
+        self, target_batch: tf.Tensor, predicted_batch: tf.Tensor
+    ) -> tf.Tensor:
+        """Computes loss for the current batch using actual & predicted values.
+
+        Computes loss for the current batch using actual & predicted values.
+
+        Args:
+            target_batch: A tensor for the the actual values for the current batch.
+            predicted_batch: A tensor for the predicted values for the current batch.
+
+        Returns:
+            A tensor for the loss for the current batch.
+        """
+        # Asserts type & value of the arguments.
+        assert isinstance(
+            target_batch, tf.Tensor
+        ), "Variable target_batch should be of type 'tf.Tensor'."
+        assert isinstance(
+            predicted_batch, tf.Tensor
+        ), "Variable predicted_batch should be of type 'tf.Tensor'."
+
+        # Computes loss for the current batch using actual values and predicted values.
+        self.loss_object = tf.keras.losses.BinaryCrossentropy(
+            from_logits=True, reduction="none"
+        )
+        loss = self.loss_object(target_batch, predicted_batch)
+        return loss
