@@ -1,8 +1,10 @@
 import os
 
-from typing import Dict, Any
+from typing import Dict, Any, List
 import pandas as pd
 from sklearn.utils import shuffle
+import tensorflow as tf
+import numpy as np
 
 
 class Dataset(object):
@@ -87,3 +89,56 @@ class Dataset(object):
         self.new_train_data = self.original_train_data[
             self.n_test_examples + self.n_validation_examples :
         ]
+
+    def shuffle_slice_dataset(self) -> None:
+        """Converts split data into tensor dataset & slices them based on batch size.
+
+        Converts split data into input & target data. Zips the input & target data, and slices them based on batch size.
+
+        Args:
+            None.
+
+        Returns:
+            None.
+        """
+        # Zips images & classes into single tensor, and shuffles it.
+        self.train_dataset = tf.data.Dataset.from_tensor_slices(
+            (
+                self.new_train_data.drop(columns=["label"]),
+                list(self.new_train_data["label"]),
+            )
+        )
+        self.validation_dataset = tf.data.Dataset.from_tensor_slices(
+            (
+                self.new_validation_data.drop(columns=["label"]),
+                list(self.new_validation_data["label"]),
+            )
+        )
+        self.test_dataset = tf.data.Dataset.from_tensor_slices(
+            (
+                self.new_test_data.drop(columns=["label"]),
+                list(self.new_test_data["label"]),
+            )
+        )
+
+        # Slices the combined dataset based on batch size, and drops remainder values.
+        self.train_dataset = self.train_dataset.batch(
+            self.model_configuration["batch_size"], drop_remainder=True
+        )
+        self.validation_dataset = self.validation_dataset.batch(
+            self.model_configuration["batch_size"], drop_remainder=True
+        )
+        self.test_dataset = self.test_dataset.batch(
+            self.model_configuration["batch_size"], drop_remainder=True
+        )
+
+        # Computes number of steps per epoch for all dataset.
+        self.n_train_steps_per_epoch = (
+            len(self.new_train_data) // self.model_configuration["batch_size"]
+        )
+        self.n_validation_steps_per_epoch = (
+            len(self.new_validation_data) // self.model_configuration["batch_size"]
+        )
+        self.n_test_steps_per_epoch = (
+            len(self.new_test_data) // self.model_configuration["batch_size"]
+        )
