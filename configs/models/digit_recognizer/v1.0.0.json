@@ -1,0 +1,10 @@
+{
+  "version": "1.0.0",
+  "epochs": 20,
+  "batch_size": 64,
+  "final_image_height": 28,
+  "final_image_width": 28,
+  "n_channels": 3,
+  "n_classes": 10,
+  "dataset_version": "1.0.0"
+}
