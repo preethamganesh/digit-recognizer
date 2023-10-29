@@ -13,6 +13,7 @@ logging.getLogger("tensorflow").setLevel(logging.FATAL)
 
 
 import tensorflow as tf
+import time
 
 from src.utils import load_json_file
 from src.digit_recognizer.dataset import Dataset
@@ -410,3 +411,43 @@ class Train(object):
         self.validation_loss.reset_states()
         self.train_accuracy.reset_states()
         self.validation_accuracy.reset_states()
+
+    def train_model_per_epoch(self, epoch: int) -> None:
+        """Trains the model using train dataset for current epoch.
+
+        Trains the model using train dataset for current epoch.
+
+        Args:
+            epoch: An integer for the number of current epoch.
+
+        Returns:
+            None.
+        """
+        # Asserts type & value of the arguments.
+        assert isinstance(epoch, int), "Variable current_epoch should be of type 'int'."
+
+        # Iterates across batches in the train dataset.
+        for batch, (texts, labels) in enumerate(
+            self.dataset.train_dataset.take(self.dataset.n_train_steps_per_epoch)
+        ):
+            batch_start_time = time.time()
+
+            # Loads input & target sequences for current batch as tensors.
+            input_batch, target_batch = self.dataset.load_input_target_batches(
+                list(texts.numpy()), list(labels.numpy())
+            )
+
+            # Trains the model using the current input and target batch.
+            self.train_step(input_batch, target_batch)
+            batch_end_time = time.time()
+
+            add_to_log(
+                "Epoch={}, Batch={}, Train loss={}, Train accuracy={}, Time taken={} sec.".format(
+                    epoch + 1,
+                    batch,
+                    str(round(self.train_loss.result().numpy(), 3)),
+                    str(round(self.train_accuracy.result().numpy(), 3)),
+                    round(batch_end_time - batch_start_time, 3),
+                )
+            )
+        add_to_log("")
