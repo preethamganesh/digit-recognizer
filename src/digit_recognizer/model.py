@@ -76,7 +76,12 @@ class Model(tf.keras.Model):
             elif name.split("_")[0] == "flatten":
                 self.model_layers[name] = tf.keras.layers.Flatten(name=name)
 
-    def call(self, inputs: List[tf.Tensor], training: bool = False) -> tf.Tensor:
+    def call(
+        self,
+        inputs: List[tf.Tensor],
+        training: bool = False,
+        masks: List[tf.Tensor] = None,
+    ) -> List[tf.Tensor]:
         """Input tensor is passed through the layers in the model.
 
         Input tensor is passed through the layers in the model.
@@ -87,6 +92,9 @@ class Model(tf.keras.Model):
         # Asserts type & values of the input arguments.
         assert isinstance(inputs, list), "Variable inputs should be of type 'list'."
         assert isinstance(training, bool), "Variable training should be of type 'bool'."
+        assert (
+            isinstance(masks, list) or masks is None
+        ), "Variable masks should be of type 'list' or masks should have value as 'None'."
 
         # Iterates across the layers arrangement, and predicts the output for each layer.
         x = inputs[0]
@@ -98,7 +106,7 @@ class Model(tf.keras.Model):
             # Else, the following output is predicted.
             else:
                 x = self.model_layers[name](x)
-        return x
+        return [x]
 
     def build_graph(self) -> tf.keras.Model:
         """Builds plottable graph for the model.
@@ -121,4 +129,4 @@ class Model(tf.keras.Model):
                 )
             )
         ]
-        return tf.keras.Model(inputs=inputs, outputs=self.call(inputs))
+        return tf.keras.Model(inputs=inputs, outputs=self.call(inputs, False, None))
