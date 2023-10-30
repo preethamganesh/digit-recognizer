@@ -76,6 +76,7 @@ class Model(tf.keras.Model):
             elif name.split("_")[0] == "flatten":
                 self.model_layers[name] = tf.keras.layers.Flatten(name=name)
 
+    @tf.function
     def call(
         self,
         inputs: List[tf.Tensor],
