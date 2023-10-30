@@ -6,6 +6,8 @@
   "final_image_width": 28,
   "n_channels": 1,
   "n_classes": 10,
+  "validation_data_percentage": 0.05,
+  "test_data_percentage": 0.05,
   "model": {
     "arrangement": [
       "resizing_0",
