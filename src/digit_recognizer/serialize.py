@@ -95,12 +95,7 @@ def serialize_model(model_version: str) -> None:
     )"""
 
     # Loads the serialized model to check if the loaded model is callable.
-    """model = tf.saved_model.load(
-        "{}/models/digit_recognizer/v{}/serialized/model".format(
-            home_directory_path, model_version
-        )
-    )"""
-    model = tf.keras.models.load_model(
+    model = tf.saved_model.load(
         "{}/models/digit_recognizer/v{}/serialized/model".format(
             home_directory_path, model_version
         )
