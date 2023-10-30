@@ -82,9 +82,10 @@ def serialize_model(model_version: str) -> None:
     # Saves the tensorflow object created from the loaded model.
     home_directory_path = os.getcwd()
     trainer.model.save(
-        "{}/models/digit_recognizer/v{}/serialized/saved_model/model".format(
+        "{}/models/digit_recognizer/v{}/serialized/model".format(
             home_directory_path, model_version
-        )
+        ),
+        save_format="tf",
     )
     """tf.saved_model.save(
         trainer.model,
@@ -100,7 +101,7 @@ def serialize_model(model_version: str) -> None:
         )
     )"""
     model = tf.keras.models.load_model(
-        "{}/models/digit_recognizer/v{}/serialized/saved_model/model".format(
+        "{}/models/digit_recognizer/v{}/serialized/model".format(
             home_directory_path, model_version
         )
     )
