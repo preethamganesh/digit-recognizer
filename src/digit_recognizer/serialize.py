@@ -86,7 +86,6 @@ def serialize_model(model_version: str) -> None:
         "{}/models/digit_recognizer/v{}/serialized/model".format(
             home_directory_path, model_version
         ),
-        save_signatures=True,
     )
 
     # Loads the serialized model to check if the loaded model is callable.
