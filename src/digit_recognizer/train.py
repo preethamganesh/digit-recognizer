@@ -369,8 +369,8 @@ class Train(object):
         # Computes the model output for current batch, and metrics for current model output.
         with tf.GradientTape() as tape:
             predictions = self.model([input_batch], True, None)
-            loss = self.compute_loss(target_batch, predictions)
-            accuracy = self.compute_accuracy(target_batch, predictions)
+            loss = self.compute_loss(target_batch, predictions[0])
+            accuracy = self.compute_accuracy(target_batch, predictions[0])
 
         # Computes gradients using loss and model variables.
         gradients = tape.gradient(loss, self.model.trainable_variables)
@@ -404,8 +404,8 @@ class Train(object):
 
         # Computes the model output for current batch, and metrics for current model output.
         predictions = self.model([input_batch], False, None)
-        loss = self.compute_loss(target_batch, predictions)
-        accuracy = self.compute_accuracy(target_batch, predictions)
+        loss = self.compute_loss(target_batch, predictions[0])
+        accuracy = self.compute_accuracy(target_batch, predictions[0])
 
         # Computes batch metrics and appends it to main metrics.
         self.validation_loss(loss)
