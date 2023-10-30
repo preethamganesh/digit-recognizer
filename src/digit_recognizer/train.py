@@ -22,6 +22,8 @@ from src.utils import add_to_log
 from src.digit_recognizer.model import Model
 from src.utils import check_directory_path_existence
 from src.utils import save_json_file
+from src.utils import create_log
+from src.utils import set_physical_devices_memory_limit
 
 
 class Train(object):
@@ -711,3 +713,55 @@ class Train(object):
             ),
         )
         add_to_log("")
+
+
+def main():
+    # Parses the arguments.
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-mv",
+        "--model_version",
+        type=str,
+        required=True,
+        help="Version by which the trained model files should be saved as.",
+    )
+    args = parser.parse_args()
+
+    # Creates an logger object for storing terminal output.
+    create_log("train_v{}".format(args.model_version), "logs/digit_recognizer")
+    add_to_log("")
+
+    # Sets memory limit of GPU if found in the system.
+    set_physical_devices_memory_limit()
+
+    # Creates an object for the Train class.
+    trainer = Train(args.model_version)
+
+    # Loads model configuration for current model version.
+    trainer.load_model_configuration()
+
+    # Loads dataset based on dataset version in the model configuration.
+    trainer.load_dataset()
+
+    # Loads model & other utilies for training it.
+    trainer.load_model()
+
+    # Generates summary and plot for loaded model.
+    trainer.generate_model_summary_and_plot(True)
+
+    # Trains & validates the model using train & validation dataset.
+    trainer.fit()
+
+    # Generates model history plots for all performance metrics.
+    trainer.generate_model_history_plot("loss")
+    trainer.generate_model_history_plot("accuracy")
+
+    # Loads the model with latest checkpoint.
+    trainer.load_model("predict")
+
+    # Tests the model using the test dataset.
+    trainer.test_model()
+
+
+if __name__ == "__main__":
+    main()
