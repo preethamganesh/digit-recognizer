@@ -394,6 +394,7 @@ class Train(object):
         Returns:
             None.
         """
+        print(type(input_batch), type(target_batch.shape))
         # Asserts type & value of the arguments.
         assert isinstance(
             input_batch, tf.Tensor
@@ -482,7 +483,7 @@ class Train(object):
         assert isinstance(epoch, int), "Variable current_epoch should be of type 'int'."
 
         # Iterates across batches in the train dataset.
-        for batch, (image_ids, label_ids) in enumerate(
+        for batch, (images, labels) in enumerate(
             self.dataset.validation_dataset.take(
                 self.dataset.n_validation_steps_per_epoch
             )
@@ -491,7 +492,7 @@ class Train(object):
 
             # Loads input & target sequences for current batch as tensors.
             input_batch, target_batch = self.dataset.load_input_target_batches(
-                image_ids.numpy(), label_ids.numpy()
+                images.numpy(), labels.numpy()
             )
 
             # Validates the model using the current input and target batch.
@@ -502,8 +503,8 @@ class Train(object):
                 "Epoch={}, Batch={}, Validation loss={}, Validation accuracy={}, Time taken={} sec.".format(
                     epoch + 1,
                     batch,
-                    str(round(self.train_loss.result().numpy(), 3)),
-                    str(round(self.train_accuracy.result().numpy(), 3)),
+                    str(round(self.validation_loss.result().numpy(), 3)),
+                    str(round(self.validation_accuracy.result().numpy(), 3)),
                     round(batch_end_time - batch_start_time, 3),
                 )
             )
