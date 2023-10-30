@@ -492,11 +492,15 @@ class Train(object):
             )
         ):
             batch_start_time = time.time()
+            print(images)
+            print(labels)
 
             # Loads input & target sequences for current batch as tensors.
             input_batch, target_batch = self.dataset.load_input_target_batches(
                 images.numpy(), labels.numpy()
             )
+            print(input_batch.shape, type(input_batch))
+            print(target_batch.shape, type(target_batch))
 
             # Validates the model using the current input and target batch.
             self.validation_step(input_batch, target_batch)
@@ -600,7 +604,7 @@ class Train(object):
             self.reset_trackers()
 
             # Trains the model using batces in the train dataset.
-            # self.train_model_per_epoch(epoch)
+            self.train_model_per_epoch(epoch)
 
             # Validates the model using batches in the validation dataset.
             self.validate_model_per_epoch(epoch)
@@ -766,7 +770,7 @@ def main():
     trainer.load_model("train")
 
     # Generates summary and plot for loaded model.
-    trainer.generate_model_summary_and_plot(False)
+    trainer.generate_model_summary_and_plot(True)
 
     # Trains & validates the model using train & validation dataset.
     trainer.fit()
