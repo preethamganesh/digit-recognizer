@@ -653,7 +653,12 @@ class Train(object):
         plt.figure(num=None, figsize=(30, 15))
 
         # Converts train and validation metrics from string format to floating point format.
-        epochs = [i for i in range(1, len(self.model_history) + 1)]
+        epochs = [
+            index
+            for index in range(
+                1, len(self.model_history["train_{}".format(metric_name)]) + 1
+            )
+        ]
         train_metrics = self.model_history["train_{}".format(metric_name)]
         train_metrics = [float(train_metrics[i]) for i in range(len(train_metrics))]
         validation_metrics = self.model_history["validation_{}".format(metric_name)]
