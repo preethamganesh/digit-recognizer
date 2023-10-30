@@ -394,7 +394,10 @@ class Train(object):
         Returns:
             None.
         """
-        print(type(input_batch), type(target_batch.shape))
+        print(type(input_batch), type(target_batch))
+        print(input_batch)
+        print(target_batch)
+        exit()
         # Asserts type & value of the arguments.
         assert isinstance(
             input_batch, tf.Tensor
@@ -597,7 +600,7 @@ class Train(object):
             self.reset_trackers()
 
             # Trains the model using batces in the train dataset.
-            self.train_model_per_epoch(epoch)
+            # self.train_model_per_epoch(epoch)
 
             # Validates the model using batches in the validation dataset.
             self.validate_model_per_epoch(epoch)
@@ -763,7 +766,7 @@ def main():
     trainer.load_model("train")
 
     # Generates summary and plot for loaded model.
-    trainer.generate_model_summary_and_plot(True)
+    trainer.generate_model_summary_and_plot(False)
 
     # Trains & validates the model using train & validation dataset.
     trainer.fit()
