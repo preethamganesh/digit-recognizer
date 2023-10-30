@@ -79,7 +79,8 @@ class Dataset(object):
             : self.n_validation_examples
         ]
         self.new_test_data = self.original_train_data[
-            self.n_test_examples : self.n_test_examples + self.n_validation_examples
+            self.n_validation_examples : self.n_test_examples
+            + self.n_validation_examples
         ]
         self.new_train_data = self.original_train_data[
             self.n_test_examples + self.n_validation_examples :
