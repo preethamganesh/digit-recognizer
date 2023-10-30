@@ -127,17 +127,24 @@ class Train(object):
         )
         add_to_log("")
 
-    def load_model(self) -> None:
+    def load_model(self, mode: str) -> None:
         """Loads model & other utilies for training.
 
         Loads model & other utilies for training.
 
         Args:
-            None.
+            mode: A string for mode by which the should be loaded, i.e., with latest checkpoints or not.
 
         Returns:
             None.
         """
+        # Asserts type & value of the arguments.
+        assert isinstance(mode, str), "Variable mode should be of type 'str'."
+        assert mode in [
+            "train",
+            "predict",
+        ], "Variable mode should have 'train' or 'predict' as value."
+
         # Loads model for current model configuration.
         self.model = Model(self.model_configuration)
 
@@ -158,6 +165,13 @@ class Train(object):
         self.manager = tf.train.CheckpointManager(
             checkpoint, directory=self.checkpoint_directory_path, max_to_keep=3
         )
+
+        # If mode is predict, then the trained checkpoint is restored.
+        if mode == "predict":
+            checkpoint.restore(
+                tf.train.latest_checkpoint(self.checkpoint_directory_path)
+            )
+
         add_to_log("Finished loading model for current configuration.")
         add_to_log("")
 
