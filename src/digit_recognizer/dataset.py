@@ -46,11 +46,6 @@ class Dataset(object):
                 self.home_directory_path
             )
         )
-        self.original_test_data = pd.read_csv(
-            "{}/data/raw_data/digit_recognizer/test.csv".format(
-                self.home_directory_path
-            )
-        )
 
     def split_dataset(self) -> None:
         """Splits original train data into new train, validation & test data.
@@ -142,3 +137,45 @@ class Dataset(object):
         self.n_test_steps_per_epoch = (
             len(self.new_test_data) // self.model_configuration["batch_size"]
         )
+
+    def load_input_target_batches(
+        self, images: np.ndarray, labels: np.ndarray
+    ) -> List[tf.Tensor]:
+        """Load input & target batchs for images & labels.
+
+        Load input & target batchs for images & labels.
+
+        Args:
+            images: A NumPy array for images in current batch.
+            labels: A NumPy array for labels in current batch.
+
+        Returns:
+            A list of tensors for the input & target batches generated from images & labels.
+        """
+        # Checks types & values of arguments.
+        assert isinstance(
+            images, np.ndarray
+        ), "Variable images should be of type 'np.ndarray'."
+        assert isinstance(
+            labels, np.ndarray
+        ), "Variable labels should be of type 'np.ndarray'."
+
+        # Converts images into tensor of shape (batch, height, width, n_channels), and converts pixels into 0 - 1 range.
+        input_batch = tf.convert_to_tensor(
+            images.reshape(
+                (
+                    self.model_configuration["batch_size"],
+                    self.model_configuration["final_image_height"],
+                    self.model_configuration["final_image_width"],
+                    self.model_configuration["n_channels"],
+                )
+            )
+        )
+        input_batch = tf.cast(input_batch, dtype=tf.float32)
+        input_batch /= 255.0
+
+        # Converts labels into categorical tensor.
+        target_batch = tf.keras.utils.to_categorical(
+            labels, num_classes=self.model_configuration["n_classes"]
+        )
+        return [input_batch, target_batch]
