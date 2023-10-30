@@ -65,13 +65,14 @@ def serialize_model(model_version: str) -> None:
 
     # Creates the input layer using the model configuration.
     inputs = [
-        tf.zeros(
+        tf.ones(
             shape=(
                 1,
                 trainer.model_configuration["final_image_height"],
                 trainer.model_configuration["final_image_width"],
                 trainer.model_configuration["n_channels"],
-            )
+            ),
+            dtype=tf.float32,
         )
     ]
 
