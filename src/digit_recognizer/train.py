@@ -161,13 +161,13 @@ class Train(object):
         add_to_log("Finished loading model for current configuration.")
         add_to_log("")
 
-    def generate_model_summary_and_plot(self) -> None:
+    def generate_model_summary_and_plot(self, plot: bool) -> None:
         """Generates summary & plot for loaded model.
 
         Generates summary & plot for loaded model.
 
         Args:
-            None.
+            pool: A boolean value to whether generate model plot or not.
 
         Returns:
             None.
@@ -188,19 +188,20 @@ class Train(object):
         )
 
         # Plots the model & saves it as a PNG file.
-        tf.keras.utils.plot_model(
-            model,
-            "{}/model_plot.png".format(self.reports_directory_path),
-            show_shapes=True,
-            show_layer_names=True,
-            expand_nested=True,
-        )
-        add_to_log(
-            "Finished saving model plot at {}/model_plot.png.".format(
-                self.reports_directory_path
+        if plot:
+            tf.keras.utils.plot_model(
+                model,
+                "{}/model_plot.png".format(self.reports_directory_path),
+                show_shapes=True,
+                show_layer_names=True,
+                expand_nested=True,
             )
-        )
-        add_to_log("")
+            add_to_log(
+                "Finished saving model plot at {}/model_plot.png.".format(
+                    self.reports_directory_path
+                )
+            )
+            add_to_log("")
 
     def initialize_model_history(self) -> None:
         """Creates empty dictionary for saving the model metrics for the current model.
