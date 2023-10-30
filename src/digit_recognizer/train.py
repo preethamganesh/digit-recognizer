@@ -675,3 +675,39 @@ class Train(object):
             )
         )
         plt.close()
+
+    def test_model(self) -> None:
+        """Tests the trained model using the test dataset.
+
+        Tests the trained model using the test dataset.
+
+        Args:
+            None.
+
+        Returns:
+            None.
+        """
+        # Resets states for validation metrics.
+        self.reset_trackers()
+
+        # Iterates across batches in the train dataset.
+        for batch, (image_ids, label_ids) in enumerate(
+            self.dataset.test_dataset.take(self.dataset.n_test_steps_per_epoch)
+        ):
+            # Loads input & target sequences for current batch as tensors.
+            input_batch, target_batch = self.dataset.load_input_target_batches(
+                image_ids.numpy(), label_ids.numpy()
+            )
+
+            # Tests the model using the current input and target batch.
+            self.validation_step(input_batch, target_batch)
+
+        add_to_log(
+            "Test loss={}.".format(str(round(self.validation_loss.result().numpy(), 3)))
+        )
+        add_to_log(
+            "Test accuracy={}.".format(
+                str(round(self.validation_accuracy.result().numpy(), 3))
+            ),
+        )
+        add_to_log("")
