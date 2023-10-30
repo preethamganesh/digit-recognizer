@@ -29,8 +29,8 @@ class Model(tf.keras.Model):
 
         # Iterates across layers in the layers arrangement.
         self.model_layers = dict()
-        for name in self.model_configuration["digit_recognition"]["arrangement"]:
-            layer = self.model_configuration["digit_recognition"]["configuration"][name]
+        for name in self.model_configuration["model"]["arrangement"]:
+            layer = self.model_configuration["model"]["configuration"][name]
 
             # If layer's name is like 'conv2d_', a Conv2D layer is initialized based on layer configuration.
             if name.split("_")[0] == "conv2d":
@@ -41,6 +41,14 @@ class Model(tf.keras.Model):
                     strides=layer["strides"],
                     activation=layer["activation"],
                     name=name,
+                )
+
+            # If layer's name is like 'resizing_', a Resizing layer is initialized.
+            elif name.split("_")[0] == "resizing":
+                self.model_layers[name] = tf.keras.layers.Resizing(
+                    height=layer["height"],
+                    width=layer["width"],
+                    interpolation=layer["interpolation"],
                 )
 
             # If layer's name is like 'maxpool2d_', a MaxPool2D layer is initialized based on layer configuration.
@@ -82,7 +90,7 @@ class Model(tf.keras.Model):
 
         # Iterates across the layers arrangement, and predicts the output for each layer.
         x = inputs[0]
-        for name in self.model_configuration["digit_recognition"]["arrangement"]:
+        for name in self.model_configuration["model"]["arrangement"]:
             # If layer's name is like 'dropout_', the following output is predicted.
             if name.split("_")[0] == "dropout":
                 x = self.model_layers[name](x, training=training)
