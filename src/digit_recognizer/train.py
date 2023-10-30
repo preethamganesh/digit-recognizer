@@ -295,7 +295,7 @@ class Train(object):
         ), "Variable predicted_batch should be of type 'tf.Tensor'."
 
         # Computes loss for the current batch using actual values and predicted values.
-        self.loss_object = tf.keras.losses.BinaryCrossentropy(
+        self.loss_object = tf.keras.losses.CategoricalCrossentropy(
             from_logits=True, reduction="none"
         )
         loss = self.loss_object(target_batch, predicted_batch)
@@ -324,7 +324,7 @@ class Train(object):
         ), "Variable predicted_batch should be of type 'tf.Tensor'."
 
         # Computes accuracy for the current batch using actual values and predicted values.
-        accuracy = tf.keras.metrics.binary_accuracy(target_batch, predicted_batch)
+        accuracy = tf.keras.metrics.categorical_accuracy(target_batch, predicted_batch)
         return accuracy
 
     @tf.function
@@ -490,3 +490,17 @@ class Train(object):
                 )
             )
         add_to_log("")
+
+    def save_model(self) -> None:
+        """Saves the model after checking performance metrics in current epoch.
+
+        Saves the model after checking performance metrics in current epoch.
+
+        Args:
+            None.
+
+        Returns:
+            None.
+        """
+        self.manager.save()
+        add_to_log("Checkpoint saved at {}.".format(self.checkpoint_directory_path))
