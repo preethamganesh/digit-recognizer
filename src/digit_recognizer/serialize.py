@@ -65,8 +65,9 @@ def serialize_model(model_version: str) -> None:
 
     # Creates the input layer using the model configuration.
     inputs = [
-        tf.keras.layers.Input(
+        tf.zeros(
             shape=(
+                1,
                 trainer.model_configuration["final_image_height"],
                 trainer.model_configuration["final_image_width"],
                 trainer.model_configuration["n_channels"],
