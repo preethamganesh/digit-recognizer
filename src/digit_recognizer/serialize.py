@@ -81,18 +81,12 @@ def serialize_model(model_version: str) -> None:
 
     # Saves the tensorflow object created from the loaded model.
     home_directory_path = os.getcwd()
-    trainer.model.save(
-        "{}/models/digit_recognizer/v{}/serialized/model".format(
-            home_directory_path, model_version
-        ),
-        save_format="tf",
-    )
-    """tf.saved_model.save(
+    tf.saved_model.save(
         trainer.model,
         "{}/models/digit_recognizer/v{}/serialized/model".format(
             home_directory_path, model_version
         ),
-    )"""
+    )
 
     # Loads the serialized model to check if the loaded model is callable.
     model = tf.saved_model.load(
