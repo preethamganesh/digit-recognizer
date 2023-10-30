@@ -84,11 +84,6 @@ class Train(object):
                 len(self.dataset.original_train_data)
             )
         )
-        add_to_log(
-            "No. of examples in the original test data: {}".format(
-                len(self.dataset.original_test_data)
-            )
-        )
         add_to_log("")
 
         # Splits original train data into new train, validation & test data.
@@ -145,10 +140,9 @@ class Train(object):
 
         # Loads the optimizer.
         self.optimizer = tf.keras.optimizers.Adam(
-            learning_rate=self.model_configuration["model"]["learning_rate"],
-            beta_1=0.9,
-            beta_2=0.98,
-            epsilon=1e-9,
+            learning_rate=self.model_configuration["model"]["optimizer"][
+                "learning_rate"
+            ]
         )
 
         # Creates checkpoint manager for the neural network model and loads the optimizer.
@@ -175,9 +169,12 @@ class Train(object):
         Returns:
             None.
         """
+        # Builds plottable graph for the model.
+        model = self.model.build_graph()
+
         # Compiles the model to log the model summary.
         model_summary = list()
-        self.model.build().summary(print_fn=lambda x: model_summary.append(x))
+        model.summary(print_fn=lambda x: model_summary.append(x))
         model_summary = "\n".join(model_summary)
         add_to_log(model_summary)
         add_to_log("")
@@ -189,7 +186,7 @@ class Train(object):
 
         # Plots the model & saves it as a PNG file.
         tf.keras.utils.plot_model(
-            self.model.build(),
+            model,
             "{}/model_plot.png".format(self.reports_directory_path),
             show_shapes=True,
             show_layer_names=True,
@@ -427,14 +424,14 @@ class Train(object):
         assert isinstance(epoch, int), "Variable current_epoch should be of type 'int'."
 
         # Iterates across batches in the train dataset.
-        for batch, (texts, labels) in enumerate(
+        for batch, (images, labels) in enumerate(
             self.dataset.train_dataset.take(self.dataset.n_train_steps_per_epoch)
         ):
             batch_start_time = time.time()
 
             # Loads input & target sequences for current batch as tensors.
             input_batch, target_batch = self.dataset.load_input_target_batches(
-                list(texts.numpy()), list(labels.numpy())
+                images.numpy(), labels.numpy()
             )
 
             # Trains the model using the current input and target batch.
@@ -443,6 +440,48 @@ class Train(object):
 
             add_to_log(
                 "Epoch={}, Batch={}, Train loss={}, Train accuracy={}, Time taken={} sec.".format(
+                    epoch + 1,
+                    batch,
+                    str(round(self.train_loss.result().numpy(), 3)),
+                    str(round(self.train_accuracy.result().numpy(), 3)),
+                    round(batch_end_time - batch_start_time, 3),
+                )
+            )
+        add_to_log("")
+
+    def validate_model_per_epoch(self, epoch: int) -> None:
+        """Validates the model using validation dataset for current epoch.
+
+        Validates the model using validation dataset for current epoch.
+
+        Args:
+            epoch: An integer for the number of current epoch.
+
+        Returns:
+            None.
+        """
+        # Asserts type & value of the arguments.
+        assert isinstance(epoch, int), "Variable current_epoch should be of type 'int'."
+
+        # Iterates across batches in the train dataset.
+        for batch, (image_ids, label_ids) in enumerate(
+            self.dataset.validation_dataset.take(
+                self.dataset.n_validation_steps_per_epoch
+            )
+        ):
+            batch_start_time = time.time()
+
+            # Loads input & target sequences for current batch as tensors.
+            input_batch, target_batch = self.dataset.load_input_target_batches(
+                image_ids.numpy(), label_ids.numpy()
+            )
+
+            # Validates the model using the current input and target batch.
+            self.validation_step(input_batch, target_batch)
+            batch_end_time = time.time()
+
+            add_to_log(
+                "Epoch={}, Batch={}, Validation loss={}, Validation accuracy={}, Time taken={} sec.".format(
                     epoch + 1,
                     batch,
                     str(round(self.train_loss.result().numpy(), 3)),
