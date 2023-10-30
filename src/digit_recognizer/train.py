@@ -394,10 +394,6 @@ class Train(object):
         Returns:
             None.
         """
-        print(type(input_batch), type(target_batch))
-        print(input_batch)
-        print(target_batch)
-        exit()
         # Asserts type & value of the arguments.
         assert isinstance(
             input_batch, tf.Tensor
@@ -492,15 +488,11 @@ class Train(object):
             )
         ):
             batch_start_time = time.time()
-            print(images)
-            print(labels)
 
             # Loads input & target sequences for current batch as tensors.
             input_batch, target_batch = self.dataset.load_input_target_batches(
                 images.numpy(), labels.numpy()
             )
-            print(input_batch.shape, type(input_batch))
-            print(target_batch.shape, type(target_batch))
 
             # Validates the model using the current input and target batch.
             self.validation_step(input_batch, target_batch)
@@ -716,12 +708,12 @@ class Train(object):
         self.reset_trackers()
 
         # Iterates across batches in the train dataset.
-        for batch, (image_ids, label_ids) in enumerate(
+        for batch, (images, labels) in enumerate(
             self.dataset.test_dataset.take(self.dataset.n_test_steps_per_epoch)
         ):
             # Loads input & target sequences for current batch as tensors.
             input_batch, target_batch = self.dataset.load_input_target_batches(
-                image_ids.numpy(), label_ids.numpy()
+                images.numpy(), labels.numpy()
             )
 
             # Tests the model using the current input and target batch.
