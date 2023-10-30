@@ -179,4 +179,5 @@ class Dataset(object):
         target_batch = tf.keras.utils.to_categorical(
             labels, num_classes=self.model_configuration["n_classes"]
         )
+        target_batch = tf.convert_to_tensor(target_batch, dtype=tf.int8)
         return [input_batch, target_batch]
