@@ -552,3 +552,59 @@ class Train(object):
         else:
             return False
         return True
+
+    def fit(self) -> None:
+        """Trains & validates the loaded model using train & validation dataset.
+
+        Trains & validates the loaded model using train & validation dataset.
+
+        Args:
+            None.
+
+        Returns:
+            None.
+        """
+        # Initializes TensorFlow trackers which computes the mean of all metrics.
+        self.initialize_metric_trackers()
+
+        # Initializes model history dataframe.
+        self.initialize_model_history()
+
+        # Iterates across epochs for training the neural network model.
+        for epoch in range(self.model_configuration["epochs"]):
+            epoch_start_time = time.time()
+
+            # Resets states for training and validation metrics before the start of each epoch.
+            self.reset_trackers()
+
+            # Trains the model using batces in the train dataset.
+            self.train_model_per_epoch(epoch)
+
+            # Validates the model using batches in the validation dataset.
+            self.validate_model_per_epoch(epoch)
+
+            # Updates model history dataframe with performance metrics for current epoch.
+            self.update_model_history(epoch)
+
+            epoch_end_time = time.time()
+            add_to_log(
+                "Epoch={}, Train loss={}, Validation loss={}, Train Accuracy={}, Validation Accuracy={}, "
+                "Time taken={} sec.".format(
+                    epoch + 1,
+                    str(round(self.train_loss.result().numpy(), 3)),
+                    str(round(self.validation_loss.result().numpy(), 3)),
+                    str(round(self.train_accuracy.result().numpy(), 3)),
+                    str(round(self.validation_accuracy.result().numpy(), 3)),
+                    round(epoch_end_time - epoch_start_time, 3),
+                )
+            )
+
+            # Stops the model from learning further if the performance has not improved from previous epoch.
+            model_training_status = self.early_stopping()
+            if not model_training_status:
+                add_to_log(
+                    "Model did not improve after 4th time. Model stopped from training further."
+                )
+                add_to_log("")
+                break
+            add_to_log("")
