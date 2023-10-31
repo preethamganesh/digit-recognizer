@@ -14,12 +14,41 @@ logging.getLogger("tensorflow").setLevel(logging.FATAL)
 
 import tensorflow as tf
 import time
+from typing import List
 
 from src.digit_recognizer.train import Train
 from src.utils import add_to_log
 from src.utils import save_json_file
 from src.utils import create_log
 from src.utils import set_physical_devices_memory_limit
+
+
+class ExportModel(tf.Module):
+    """"""
+
+    def __init__(self, model: tf.keras.Model, image_shape: List[int]) -> None:
+        """Initializes the variables in the class.
+
+        Initializes the variables in the class.
+
+        Args:
+            model: A tensorflow model for the model trained with latest checkpoints.
+            image_shape: A list of integer for the size of input image.
+
+        Returns:
+            None.
+        """
+        # Asserts type of input arguments.
+        assert isinstance(
+            model, tf.keras.Model
+        ), "Variable model should be of type 'tensorflow.keras.Model'."
+        assert isinstance(
+            image_shape, list
+        ), "Variable image_shape should be of type 'tensorflow.keras.Model'."
+
+        # Initializes class variables.
+        self.model = model
+        self.image_shape = image_shape
 
 
 def serialize_model(model_version: str) -> None:
