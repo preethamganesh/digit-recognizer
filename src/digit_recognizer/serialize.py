@@ -61,9 +61,7 @@ class ExportModel(tf.Module):
             An integer for the number predicted by the model for the current image.
         """
         prediction = self.model([image], False, None)[0]
-        output = tf.argmax(prediction, axis=1)  # .numpy()[0]
-        print(output.shape, type(output))
-        output = output.numpy()
+        output = tf.argmax(prediction, axis=1)
         return output
 
 
@@ -127,7 +125,7 @@ def serialize_model(model_version: str) -> None:
 
     #
     output = exported_model(input_image)
-    print(output)
+    print(output.numpy()[0])
 
     """# Saves the tensorflow object created from the loaded model.
     home_directory_path = os.getcwd()
