@@ -61,9 +61,9 @@ class ExportModel(tf.Module):
             An integer for the number predicted by the model for the current image.
         """
         prediction = self.model([image], False, None)[0]
-        print(prediction.shape, type(prediction))
-        output = tf.argmax(prediction)  # .numpy()[0]
+        output = tf.argmax(prediction, axis=1)  # .numpy()[0]
         print(output.shape, type(output))
+        output = output.numpy()
         return output
 
 
