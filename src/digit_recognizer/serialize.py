@@ -117,34 +117,30 @@ def serialize_model(model_version: str) -> None:
         dtype=tf.float32,
     )
 
-    # Passes the sample inputs through the model to create a callable object.
-    # _ = trainer.model(inputs, False, None)
-
     # Exports trained tensorflow model as tensorflow module for serving.
     exported_model = ExportModel(trainer.model)
 
-    #
-    output = exported_model(input_image)
-    print(output.numpy()[0])
+    # Tests the exported model.
+    _ = exported_model(input_image)
 
-    """# Saves the tensorflow object created from the loaded model.
+    # Saves the tensorflow object created from the loaded model.
     home_directory_path = os.getcwd()
     tf.saved_model.save(
-        trainer.model,
+        exported_model,
         "{}/models/digit_recognizer/v{}/serialized/model".format(
             home_directory_path, model_version
         ),
     )
 
     # Loads the serialized model to check if the loaded model is callable.
-    model = tf.saved_model.load(
+    exported_model = tf.saved_model.load(
         "{}/models/digit_recognizer/v{}/serialized/model".format(
             home_directory_path, model_version
         )
     )
-    _ = model(inputs, False, None)
+    _ = exported_model(input_image)
     add_to_log("Finished serializing model & configuration files.")
-    add_to_log("")"""
+    add_to_log("")
 
 
 def main():
