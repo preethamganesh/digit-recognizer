@@ -23,7 +23,7 @@ from src.utils import set_physical_devices_memory_limit
 
 
 class ExportModel(tf.Module):
-    """"""
+    """Exports trained tensorflow model as tensorflow module for serving."""
 
     def __init__(self, model: tf.keras.Model) -> None:
         """Initializes the variables in the class.
@@ -56,7 +56,7 @@ class ExportModel(tf.Module):
         Return:
             An integer for the number predicted by the model for the current image.
         """
-        prediction = self.model(image)[0]
+        prediction = self.model([image], False, None)[0]
         output = tf.argmax(prediction).numpy()[0]
         return output
 
@@ -103,22 +103,27 @@ def serialize_model(model_version: str) -> None:
     add_to_log("")
 
     # Creates the input layer using the model configuration.
-    inputs = [
-        tf.ones(
-            shape=(
-                1,
-                trainer.model_configuration["final_image_height"],
-                trainer.model_configuration["final_image_width"],
-                trainer.model_configuration["n_channels"],
-            ),
-            dtype=tf.float32,
-        )
-    ]
+    input_image = tf.ones(
+        shape=(
+            1,
+            trainer.model_configuration["final_image_height"],
+            trainer.model_configuration["final_image_width"],
+            trainer.model_configuration["n_channels"],
+        ),
+        dtype=tf.float32,
+    )
 
     # Passes the sample inputs through the model to create a callable object.
-    _ = trainer.model(inputs, False, None)
+    # _ = trainer.model(inputs, False, None)
 
-    # Saves the tensorflow object created from the loaded model.
+    # Exports trained tensorflow model as tensorflow module for serving.
+    exported_model = ExportModel(trainer.model)
+
+    #
+    output = exported_model(input_image)
+    print(output)
+
+    """# Saves the tensorflow object created from the loaded model.
     home_directory_path = os.getcwd()
     tf.saved_model.save(
         trainer.model,
@@ -135,7 +140,7 @@ def serialize_model(model_version: str) -> None:
     )
     _ = model(inputs, False, None)
     add_to_log("Finished serializing model & configuration files.")
-    add_to_log("")
+    add_to_log("")"""
 
 
 def main():
