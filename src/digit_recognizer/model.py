@@ -87,7 +87,12 @@ class Model(tf.keras.Model):
         Input tensor is passed through the layers in the model.
 
         Args:
-            inputs: A list of tensors containing inputs for
+            inputs: A list for the inputs from the input batch.
+            training: A boolean value for the flag of training/testing state.
+            masks: A tensor for the masks from the input batch.
+
+        Returns:
+            A tensor for the processed output from the components in the layer.
         """
         # Asserts type & values of the input arguments.
         assert isinstance(inputs, list), "Variable inputs should be of type 'list'."
