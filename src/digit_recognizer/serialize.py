@@ -14,7 +14,6 @@ logging.getLogger("tensorflow").setLevel(logging.FATAL)
 
 import tensorflow as tf
 import time
-from typing import List
 
 from src.digit_recognizer.train import Train
 from src.utils import add_to_log
@@ -26,14 +25,13 @@ from src.utils import set_physical_devices_memory_limit
 class ExportModel(tf.Module):
     """"""
 
-    def __init__(self, model: tf.keras.Model, image_shape: List[int]) -> None:
+    def __init__(self, model: tf.keras.Model) -> None:
         """Initializes the variables in the class.
 
         Initializes the variables in the class.
 
         Args:
             model: A tensorflow model for the model trained with latest checkpoints.
-            image_shape: A list of integer for the size of input image.
 
         Returns:
             None.
@@ -42,13 +40,25 @@ class ExportModel(tf.Module):
         assert isinstance(
             model, tf.keras.Model
         ), "Variable model should be of type 'tensorflow.keras.Model'."
-        assert isinstance(
-            image_shape, list
-        ), "Variable image_shape should be of type 'tensorflow.keras.Model'."
 
         # Initializes class variables.
         self.model = model
-        self.image_shape = image_shape
+
+    @tf.function(input_signature=[tf.TensorSpec(shape=[], dtype=tf.float32)])
+    def __call__(self, image: tf.Tensor) -> int:
+        """Input image is passed through the model for prediction.
+
+        Input image is passed through the model for prediction.
+
+        Args:
+            image: A tensor for the processed image for which the model should predict the result.
+
+        Return:
+            An integer for the number predicted by the model for the current image.
+        """
+        prediction = self.model(image)[0]
+        output = tf.argmax(prediction).numpy()[0]
+        return output
 
 
 def serialize_model(model_version: str) -> None:
