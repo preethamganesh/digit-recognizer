@@ -44,7 +44,11 @@ class ExportModel(tf.Module):
         # Initializes class variables.
         self.model = model
 
-    @tf.function(input_signature=[tf.TensorSpec(shape=[], dtype=tf.float32)])
+    @tf.function(
+        input_signature=[
+            tf.TensorSpec(shape=[None, None, None, None], dtype=tf.float32)
+        ]
+    )
     def __call__(self, image: tf.Tensor) -> int:
         """Input image is passed through the model for prediction.
 
