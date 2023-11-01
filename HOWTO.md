@@ -10,15 +10,21 @@
 
 - All files or commands should be executed from the repo home directory.
 
-### Model Training & Testing
+## Download Dataset
+
+- Download dataset from Kaggle - Digit Recognizer competition [[Link]](https://www.kaggle.com/c/digit-recognizer/data).
+- The ZIP file downloaded using the above link, will have 2 CSV files, namely, 'train.csv' and 'test.csv'.
+- Move the 'train.csv' file to 'data/raw_data/digit_recognizer' directory.
+
+## Model Training & Testing
 
 Trains & tests the classification model using Kaggle's Digit Recognizer dataset.
 
-#### Arguments
+### Arguments
 
 - **--model_version or -mv**: Version by which the trained model files should be saved as.
 
-#### Sample Usage
+### Sample Usage
 
 ```
 python3 src/digit_recognizer/train.py --model_version 1.0.0
