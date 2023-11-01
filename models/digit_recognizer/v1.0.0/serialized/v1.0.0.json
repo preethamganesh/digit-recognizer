@@ -1,0 +1,120 @@
+{
+    "version": "1.0.0",
+    "epochs": 20,
+    "batch_size": 64,
+    "final_image_height": 28,
+    "final_image_width": 28,
+    "n_channels": 1,
+    "n_classes": 10,
+    "validation_data_percentage": 0.05,
+    "test_data_percentage": 0.05,
+    "model": {
+        "arrangement": [
+            "resizing_0",
+            "conv2d_0",
+            "conv2d_1",
+            "maxpool2d_0",
+            "dropout_0",
+            "conv2d_2",
+            "conv2d_3",
+            "maxpool2d_1",
+            "dropout_1",
+            "flatten",
+            "dense_0",
+            "dense_1",
+            "dense_2"
+        ],
+        "optimizer": {
+            "name": "adam",
+            "learning_rate": 0.001
+        },
+        "configuration": {
+            "resizing_0": {
+                "height": 28,
+                "width": 28,
+                "interpolation": "bilinear"
+            },
+            "conv2d_0": {
+                "filters": 8,
+                "kernel_size": 3,
+                "padding": "valid",
+                "activation": "relu",
+                "strides": [
+                    1,
+                    1
+                ]
+            },
+            "conv2d_1": {
+                "filters": 16,
+                "kernel_size": 3,
+                "padding": "valid",
+                "activation": "relu",
+                "strides": [
+                    1,
+                    1
+                ]
+            },
+            "maxpool2d_0": {
+                "pool_size": [
+                    2,
+                    2
+                ],
+                "strides": [
+                    2,
+                    2
+                ],
+                "padding": "valid"
+            },
+            "dropout_0": {
+                "rate": 0.1
+            },
+            "conv2d_2": {
+                "filters": 32,
+                "kernel_size": 3,
+                "padding": "valid",
+                "activation": "relu",
+                "strides": [
+                    1,
+                    1
+                ]
+            },
+            "conv2d_3": {
+                "filters": 64,
+                "kernel_size": 3,
+                "padding": "valid",
+                "activation": "relu",
+                "strides": [
+                    1,
+                    1
+                ]
+            },
+            "maxpool2d_1": {
+                "pool_size": [
+                    2,
+                    2
+                ],
+                "strides": [
+                    2,
+                    2
+                ],
+                "padding": "valid"
+            },
+            "dropout_1": {
+                "rate": 0.1
+            },
+            "flatten": {},
+            "dense_0": {
+                "units": 512,
+                "activation": "relu"
+            },
+            "dense_1": {
+                "units": 128,
+                "activation": "relu"
+            },
+            "dense_2": {
+                "units": 10,
+                "activation": "softmax"
+            }
+        }
+    }
+}
