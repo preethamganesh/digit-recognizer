@@ -4,7 +4,7 @@
 
 - [Download Dataset](#download-dataset)
 - [Model Training & Testing](#model-training-&-testing-spam-classification)
-- [Serialization](#serialization)
+- [Model Serialization](#model-serialization)
 
 ## Note:
 
@@ -34,4 +34,24 @@ or
 
 ```
 python3 src/digit_recognizer/train.py -mv 1.0.0
+```
+
+## Model Serialization
+
+Serializes the trained classification model & its utility files.
+
+### Arguments
+
+- **--model_version or -mv**: Version by which the trained model files should be saved as.
+
+### Sample Usage
+
+```
+python3 src/digit_recognizer/serialize.py --model_version 1.0.0
+```
+
+or
+
+```
+python3 src/digit_recognizer/serialize.py -mv 1.0.0
 ```
